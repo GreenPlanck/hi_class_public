@@ -1,6 +1,16 @@
 CLASS: Cosmic Linear Anisotropy Solving System  {#mainpage}
 ==============================================
 
+$c_s^2=\frac{\rm{cs2num}}{D}=1$ is fixed. Since cs2num is irrelevant with $\alpha_K$, we firstly calculate cs2num.
+
+$D\equiv \alpha_K+\frac{3}{2}\alpha_B^2={\rm cs2num}\rightarrow \alpha_K = {\rm cs2num}-\frac{3}{2}\alpha_B^2$
+
+according to Eq2.12 https://arxiv.org/pdf/1605.06102
+
+ 
+
+
+
 Authors: Julien Lesgourgues, Thomas Tram, Nils Schoeneberg
 
 with several major inputs from other people, especially Benjamin
