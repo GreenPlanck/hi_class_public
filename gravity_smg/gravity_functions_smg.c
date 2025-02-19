@@ -491,7 +491,7 @@ int gravity_functions_As_from_alphas_smg(
   // alphas
   double M2 = pvecback[pba->index_bg_M2_smg];
   double DelM2 = pvecback[pba->index_bg_delta_M2_smg];
-  double kin = pvecback[pba->index_bg_kineticity_smg];
+  //double kin = pvecback[pba->index_bg_kineticity_smg];
   double bra = pvecback[pba->index_bg_braiding_smg];
   double run = pvecback[pba->index_bg_M2_running_smg];
   double ten = pvecback[pba->index_bg_tensor_excess_smg];
@@ -499,13 +499,27 @@ int gravity_functions_As_from_alphas_smg(
   double dM2 = pvecback[pba->index_bg_delta_M2_smg];
 
   // need to update the time derivatives of the interesting functions
-  double kin_p = factor*pvecback_derivs[pba->index_bg_kineticity_smg];
+  //double kin_p = factor*pvecback_derivs[pba->index_bg_kineticity_smg];
   double bra_p = factor*pvecback_derivs[pba->index_bg_braiding_smg];
   double run_p = factor*pvecback_derivs[pba->index_bg_M2_running_smg];
   double ten_p = factor*pvecback_derivs[pba->index_bg_tensor_excess_smg];
   double beh_p = factor*pvecback_derivs[pba->index_bg_beyond_horndeski_smg];
   double p_tot_p = factor*pvecback_derivs[pba->index_bg_p_tot_wo_smg];
   double p_smg_p = factor*pvecback_derivs[pba->index_bg_p_smg];
+
+    // calulcate cs2num first and then set alphaK to make cs2=1
+  pvecback[pba->index_bg_cs2num_smg] = 
+    + (2. - bra)*(bra + 2.*beh + 2.*run + 2.*beh*run - 2.*ten + bra*ten)/2.
+    + 3./2.*(2. - bra)*(1. + beh)*pow(H,-2)*(rho_smg + p_smg)
+    - 3./2.*(1. + beh)*(2. + 2.*beh - 2.*M2 + bra*M2)*pow(H,-2)/M2*(rho_tot + p_tot)
+    + (1. + beh)*bra_p/a/H
+    + (2. - bra)*beh_p/a/H;
+    
+
+  double kin = pvecback[pba->index_bg_cs2num_smg]-3./2.*pow(bra,2);
+  pvecback[pba->index_bg_kineticity_smg] = kin;
+  double kin_p = factor*pvecback_derivs[pba->index_bg_kineticity_smg];
+    // end lzy
 
   // kinetic term D
   pvecback[pba->index_bg_kinetic_D_smg] = kin + 3./2.*pow(bra,2);
@@ -681,12 +695,7 @@ int gravity_functions_As_from_alphas_smg(
   pvecback[pba->index_bg_lambda_11_smg] = bra + 2.*run - (2.-bra)*ten;
 
 
-  pvecback[pba->index_bg_cs2num_smg] = 
-    + (2. - bra)*(bra + 2.*beh + 2.*run + 2.*beh*run - 2.*ten + bra*ten)/2.
-    + 3./2.*(2. - bra)*(1. + beh)*pow(H,-2)*(rho_smg + p_smg)
-    - 3./2.*(1. + beh)*(2. + 2.*beh - 2.*M2 + bra*M2)*pow(H,-2)/M2*(rho_tot + p_tot)
-    + (1. + beh)*bra_p/a/H
-    + (2. - bra)*beh_p/a/H;
+
 
   // NOTE: this is to regularize cs2 when both the numerator and denominator are
   // below numerical precision
