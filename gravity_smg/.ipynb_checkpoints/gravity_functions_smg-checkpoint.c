@@ -518,12 +518,14 @@ int gravity_functions_As_from_alphas_smg(
   double kin;
   double kin_p;
   if ((pvecback[pba->index_bg_cs2num_smg]==0) && (pba->parameters_smg[1] == -1) && (pba->parameters_smg[2]==0)){
-  kin = pvecback[pba->index_bg_kineticity_smg];
-  kin_p = factor*pvecback_derivs[pba->index_bg_kineticity_smg];
+      if (pvecback[pba->index_bg_kineticity_smg]==0) kin=0.5;
+      else kin = pvecback[pba->index_bg_kineticity_smg];
+  // kin_p = factor*pvecback_derivs[pba->index_bg_kineticity_smg];
   // for cs2num=0,alphaBTM=0, kin=arbitrary number for LCDM
   }
   else{
   kin = pvecback[pba->index_bg_cs2num_smg]-3./2.*pow(bra,2);}
+    
   pvecback[pba->index_bg_kineticity_smg] = kin;
   kin_p = factor*pvecback_derivs[pba->index_bg_kineticity_smg];
     // end lzy
