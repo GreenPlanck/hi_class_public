@@ -409,6 +409,7 @@ int gravity_functions_building_blocks_from_Gs_smg(
 
   pvecback[pba->index_bg_kineticity_smg] = 2.*pow(H,-2)*X*pvecback[pba->index_bg_kineticity_over_phiphi_smg];
 
+
   /* alpha_B braiding */
   pvecback[pba->index_bg_braiding_over_phi_smg] =
   2.*(
@@ -517,12 +518,17 @@ int gravity_functions_As_from_alphas_smg(
 
     double kin = pvecback[pba->index_bg_cs2num_smg]-3./2.*pow(bra,2);
     pvecback[pba->index_bg_kineticity_smg] = kin;
+
+    
+    
+        
     double kin_p = factor*pvecback_derivs[pba->index_bg_kineticity_smg];
     // end lzy
 
   // kinetic term D
   pvecback[pba->index_bg_kinetic_D_smg] = kin + 3./2.*pow(bra,2);
 
+  // printf("ksmg %lf",pvecback[pba->index_bg_kineticity_smg]+1.5*bra*bra-pvecback[pba->index_bg_kinetic_D_smg]);
 
   // A0
 	pvecback[pba->index_bg_A0_smg] =

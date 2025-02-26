@@ -617,6 +617,7 @@ int background_solve_smg(
 							 pba->error_message,
 							 pba->error_message);
 
+        
 		copy_to_background_table_smg(pba, i, pba->index_bg_kinetic_D_smg, pvecback[pba->index_bg_kinetic_D_smg]);
 		copy_to_background_table_smg(pba, i, pba->index_bg_A0_smg, pvecback[pba->index_bg_A0_smg]);
 		copy_to_background_table_smg(pba, i, pba->index_bg_A1_smg, pvecback[pba->index_bg_A1_smg]);
@@ -635,7 +636,7 @@ int background_solve_smg(
 		copy_to_background_table_smg(pba, i, pba->index_bg_A14_smg, pvecback[pba->index_bg_A14_smg]);
 		copy_to_background_table_smg(pba, i, pba->index_bg_A15_smg, pvecback[pba->index_bg_A15_smg]);
 		copy_to_background_table_smg(pba, i, pba->index_bg_A16_smg, pvecback[pba->index_bg_A16_smg]);
-
+        
 		if (pba->field_evolution_smg == _TRUE_) {
 
 			class_call(gravity_functions_Cs_from_Bs_smg(pba, pvecback, pvecback_derivs),
@@ -714,7 +715,7 @@ int background_solve_smg(
 	  pba->error_message,
 	  free(pvecback_derivs);free(pvecback);free(pvecback_integration);background_free(pba);
 	);
-
+    
 	 /* Yet another (third!) loop to make sure the background table makes sense
 	 */
 	for (i=0; i < pba->bt_size; i++) {
@@ -822,6 +823,7 @@ int background_solve_smg(
 		}
 
 	}
+    
 
 	free(pvecback_derivs);  //free the structure
 
@@ -1067,6 +1069,8 @@ int background_output_data_smg(
 		class_store_double(dataptr,pvecback[pba->index_bg_M2_smg],_TRUE_,storeidx);
 		class_store_double(dataptr,pvecback[pba->index_bg_delta_M2_smg],_TRUE_,storeidx);
 		class_store_double(dataptr,pvecback[pba->index_bg_kineticity_smg],_TRUE_,storeidx);
+        // printf("hahah %lf", pvecback[pba->index_bg_kineticity_smg]);
+        
 		class_store_double(dataptr,pvecback[pba->index_bg_braiding_smg],_TRUE_,storeidx);
 		class_store_double(dataptr,pvecback[pba->index_bg_tensor_excess_smg],_TRUE_,storeidx);
 		class_store_double(dataptr,pvecback[pba->index_bg_M2_running_smg],_TRUE_,storeidx);

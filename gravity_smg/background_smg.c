@@ -215,20 +215,24 @@ int background_gravity_functions_smg(
     pvecback[pba->index_bg_M2_smg] = 1.;
     pvecback[pba->index_bg_delta_M2_smg] = 0.;
     pvecback[pba->index_bg_M2_running_smg] = 0.;
-
 		/* get background parametrizations. */
 		class_call(gravity_models_get_alphas_par_smg(pba, a, pvecback, pvecback_B),
  	    pba->error_message,
  	    pba->error_message
  	  );
-
+	// // lzy
+	// double * pvecback_derivs;
+	// class_alloc(pvecback_derivs,pba->bg_size*sizeof(double),pba->error_message);
+	// class_call(gravity_functions_As_from_alphas_smg(pba, pvecback, pvecback_derivs),pba->error_message,pba->error_message);
+	// // end lzy
 	}
 	//end of parameterized mode
 
   // add a value to the kineticity to avoid problems with perturbations in certain models.
   // NOTE: this needs to be done here to avoid interfering with the equations
+  
   pvecback[pba->index_bg_kineticity_smg] += pba->kineticity_safe_smg;
-
+	
   //Derivatives of the BS functions and others. Set to zero here and computed numerically once the background is integrated (needed so that debuggers don't complain).
 
   pvecback[pba->index_bg_kineticity_prime_smg] = 0.;
@@ -617,6 +621,7 @@ int background_solve_smg(
 							 pba->error_message,
 							 pba->error_message);
 
+        copy_to_background_table_smg(pba, i, pba->index_bg_kineticity_smg, pvecback[pba->index_bg_kineticity_smg]); // lzy: this is important otherwise, we still use the default alphaK
 		copy_to_background_table_smg(pba, i, pba->index_bg_kinetic_D_smg, pvecback[pba->index_bg_kinetic_D_smg]);
 		copy_to_background_table_smg(pba, i, pba->index_bg_A0_smg, pvecback[pba->index_bg_A0_smg]);
 		copy_to_background_table_smg(pba, i, pba->index_bg_A1_smg, pvecback[pba->index_bg_A1_smg]);
@@ -635,13 +640,13 @@ int background_solve_smg(
 		copy_to_background_table_smg(pba, i, pba->index_bg_A14_smg, pvecback[pba->index_bg_A14_smg]);
 		copy_to_background_table_smg(pba, i, pba->index_bg_A15_smg, pvecback[pba->index_bg_A15_smg]);
 		copy_to_background_table_smg(pba, i, pba->index_bg_A16_smg, pvecback[pba->index_bg_A16_smg]);
-
+        
 		if (pba->field_evolution_smg == _TRUE_) {
 
 			class_call(gravity_functions_Cs_from_Bs_smg(pba, pvecback, pvecback_derivs),
 								 pba->error_message,
 								 pba->error_message);
-
+			
 			copy_to_background_table_smg(pba, i, pba->index_bg_kinetic_D_over_phiphi_smg, pvecback[pba->index_bg_kinetic_D_over_phiphi_smg]);
 			copy_to_background_table_smg(pba, i, pba->index_bg_C0_smg, pvecback[pba->index_bg_C0_smg]);
 			copy_to_background_table_smg(pba, i, pba->index_bg_C1_smg, pvecback[pba->index_bg_C1_smg]);
@@ -677,7 +682,7 @@ int background_solve_smg(
 		copy_to_background_table_smg(pba, i, pba->index_bg_cs2_smg, pvecback[pba->index_bg_cs2_smg]);
 		copy_to_background_table_smg(pba, i, pba->index_bg_G_eff_smg, pvecback[pba->index_bg_G_eff_smg]);
 		copy_to_background_table_smg(pba, i, pba->index_bg_slip_eff_smg, pvecback[pba->index_bg_slip_eff_smg]);
-
+		
 		/* Here we update the minimum values of the stability quantities
 		* test will be performed based on the lowest values
 		*/
@@ -707,14 +712,14 @@ int background_solve_smg(
 		}
 
 	}
-
+	
 	class_call_except(
 	  stability_tests_smg(pba, pvecback, pvecback_integration),
 	  pba->error_message,
 	  pba->error_message,
 	  free(pvecback_derivs);free(pvecback);free(pvecback_integration);background_free(pba);
 	);
-
+    
 	 /* Yet another (third!) loop to make sure the background table makes sense
 	 */
 	for (i=0; i < pba->bt_size; i++) {
@@ -822,7 +827,8 @@ int background_solve_smg(
 		}
 
 	}
-
+    
+	
 	free(pvecback_derivs);  //free the structure
 
 	return _SUCCESS_;
@@ -1061,12 +1067,13 @@ int background_output_data_smg(
 	int storeidx = *ptr_storeidx;
 
 	class_store_double(dataptr,pvecback[pba->index_bg_rho_smg],_TRUE_,storeidx);
-  class_store_double(dataptr,pvecback[pba->index_bg_p_smg],_TRUE_,storeidx);
-
+  	class_store_double(dataptr,pvecback[pba->index_bg_p_smg],_TRUE_,storeidx);
 	if (pba->output_background_smg >= 1){
 		class_store_double(dataptr,pvecback[pba->index_bg_M2_smg],_TRUE_,storeidx);
 		class_store_double(dataptr,pvecback[pba->index_bg_delta_M2_smg],_TRUE_,storeidx);
+		
 		class_store_double(dataptr,pvecback[pba->index_bg_kineticity_smg],_TRUE_,storeidx);
+        // printf("hahah %lf", pvecback[pba->index_bg_kineticity_smg]);
 		class_store_double(dataptr,pvecback[pba->index_bg_braiding_smg],_TRUE_,storeidx);
 		class_store_double(dataptr,pvecback[pba->index_bg_tensor_excess_smg],_TRUE_,storeidx);
 		class_store_double(dataptr,pvecback[pba->index_bg_M2_running_smg],_TRUE_,storeidx);
