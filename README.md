@@ -1,5 +1,4 @@
-CLASS: Cosmic Linear Anisotropy Solving System  {#mainpage}
-==============================================
+# New feature
 
 $c_s^2=\frac{\rm{cs2num}}{D}=1$ is fixed. Since cs2num is irrelevant with $\alpha_K$, we firstly calculate cs2num.
 
@@ -7,7 +6,22 @@ $D\equiv \alpha_K+\frac{3}{2}\alpha_B^2={\rm cs2num}\rightarrow \alpha_K = {\rm 
 
 according to Eq2.12 https://arxiv.org/pdf/1605.06102
 
- 
+Please cite our paper
+
+```
+@article{Lu:2025gki,
+    author = "Lu, Zhiyu and Simon, Th\'eo and Zhang, Pierre",
+    title = "{Preference for evolving dark energy in light of the galaxy bispectrum}",
+    eprint = "2503.04602",
+    archivePrefix = "arXiv",
+    primaryClass = "astro-ph.CO",
+    month = "3",
+    year = "2025"
+} 
+```
+
+CLASS: Cosmic Linear Anisotropy Solving System  {#mainpage}
+==============================================
 
 
 

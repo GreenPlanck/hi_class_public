@@ -518,8 +518,6 @@ int gravity_functions_As_from_alphas_smg(
 
     double kin = pvecback[pba->index_bg_cs2num_smg]-3./2.*pow(bra,2);
     pvecback[pba->index_bg_kineticity_smg] = kin;
-
-    
     
         
     double kin_p = factor*pvecback_derivs[pba->index_bg_kineticity_smg];
