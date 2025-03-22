@@ -2845,11 +2845,11 @@ cdef class Class:
             elif name == 'Omega0_fld':
                 value = self.ba.Omega0_fld
             elif name == 'w0_fld':
-                #value = self.ba.w0_fld
-                value = self.__MontePython_ask_for_array_component(name, self.ba.parameters_smg, self.ba.parameters_size_smg)[1]
+                value = self.ba.w0_fld
+                #value = self.__MontePython_ask_for_array_component(name, self.ba.parameters_smg, self.ba.parameters_size_smg)[1]
             elif name == 'wa_fld':
-                #value = self.ba.wa_fld
-                value = self.__MontePython_ask_for_array_component(name, self.ba.parameters_smg, self.ba.parameters_size_smg)[2]
+                value = self.ba.wa_fld
+                #value = self.__MontePython_ask_for_array_component(name, self.ba.parameters_smg, self.ba.parameters_size_smg)[2]
             elif name == 'age':
                 value = self.ba.age
             elif name == 'conformal_age':
