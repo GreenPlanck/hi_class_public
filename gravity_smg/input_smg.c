@@ -273,7 +273,7 @@ int input_read_parameters_smg(
   /** re-assign shooting parameter (for no-tuning debug mode) */
   if (pba->Omega_smg_debug == 0)
     class_read_double("shooting_parameter_smg",pba->parameters_smg[pba->tuning_index_smg]);
-
+    
   // test that the tuning is correct
   class_test(pba->tuning_index_smg >= pba->parameters_size_smg,
        errmsg,

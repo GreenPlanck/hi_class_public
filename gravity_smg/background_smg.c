@@ -222,6 +222,8 @@ int background_gravity_functions_smg(
  	    pba->error_message
  	  );
 
+	  
+
 	}
 	//end of parameterized mode
 

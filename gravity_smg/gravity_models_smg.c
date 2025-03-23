@@ -54,6 +54,15 @@ int gravity_models_gravity_properties_smg(
      class_read_list_of_doubles("parameters_smg",pba->parameters_2_smg,pba->parameters_2_size_smg);
    }
 
+  if (strcmp(string1,"fR") == 0) {
+     pba->gravity_model_smg = fR;
+     pba->field_evolution_smg = _FALSE_;
+     pba->M2_evolution_smg = _FALSE_;
+     flag2=_TRUE_;
+     pba->parameters_2_size_smg = 2;
+     class_read_list_of_doubles("parameters_smg",pba->parameters_2_smg,pba->parameters_2_size_smg);
+   }
+
   if (strcmp(string1,"propto_scale") == 0) {
      pba->gravity_model_smg = propto_scale;
      pba->field_evolution_smg = _FALSE_;
@@ -489,7 +498,7 @@ int gravity_models_gravity_properties_smg(
 
   class_test(flag2==_FALSE_,
              errmsg,
-             "could not identify gravity_theory value, check that it is one of 'propto_omega', 'propto_scale', 'constant_alphas', 'eft_alphas_power_law', 'eft_gammas_power_law', 'eft_gammas_exponential', 'brans_dicke', 'galileon', 'nKGB', 'quintessence_monomial', 'quintessence_tracker', 'alpha_attractor_canonical' ...");
+             "could not identify gravity_theory value, check that it is one of 'propto_omega','fR', 'propto_scale', 'constant_alphas', 'eft_alphas_power_law', 'eft_gammas_power_law', 'eft_gammas_exponential', 'brans_dicke', 'galileon', 'nKGB', 'quintessence_monomial', 'quintessence_tracker', 'alpha_attractor_canonical' ...");
 
   return _SUCCESS_;
 }
@@ -824,6 +833,12 @@ int gravity_models_get_alphas_par_smg(
   double rho_tot = pvecback[pba->index_bg_rho_tot_wo_smg]+pvecback[pba->index_bg_rho_smg];
   double p_tot = pvecback[pba->index_bg_p_tot_wo_smg]+pvecback[pba->index_bg_p_smg];
   double Omega_smg = pvecback[pba->index_bg_rho_smg]/rho_tot;
+  double H = pvecback[pba->index_bg_H];
+  double H_prime = pvecback[pba->index_bg_H_prime];
+  double dH_dlna = pvecback[pba->index_bg_H_prime]/(a*H);
+  double d2H_dlna2 = 1./(a*H)*(1+a*H_prime/(a*a*H*H))*H_prime+1./pow(a*H,2)*pvecback[pba->index_bg_H_prime_prime];
+
+
 
   /* defined always (otherwise the compiler complains), but used only
    * if we need to integrate Mpl_running_smg */
@@ -845,6 +860,86 @@ int gravity_models_get_alphas_par_smg(
     pvecback[pba->index_bg_M2_running_smg] = c_m*Omega_smg;
     pvecback[pba->index_bg_delta_M2_smg] = delta_M2; //M2-1
     pvecback[pba->index_bg_M2_smg] = 1.+delta_M2;
+  }
+
+  if (pba->gravity_model_smg == fR) {
+
+    // double c1 = pba->parameters_2_smg[0];
+    // double n = pba->parameters_2_smg[1];
+    // double c2 = c1/(6.*pba->Omega0_smg/(1-pba->Omega0_smg));
+    // double m2 = pow(8315.,-2);
+    
+    // double R = 12.*pow(H,2)+6.*H*dH_dlna;
+    // double x = R/m2;
+    
+
+    // double f = -m2*c1*pow(x,n)/(c2*pow(x,n)+1.);
+    // double f_R=-c1*n*pow(x,n-1.)/pow(c2*pow(x,n)+1.,2.);
+    // double f_RR=c1*m2*n*pow(x,n)*(1.-n+c2*(1.+n)*pow(x,n))/(R*R*pow(1.+c2*pow(x,n),3.));
+    // //double dR_dlna = (m2*pow(a,-3.)-(H*H-f_R*(H*dH_dlna+H*H)+1./6.*f))/(H*H*f_RR);
+    // double dR_dlna = (pvecback[pba->index_bg_rho_tot_wo_smg]-(H*H-f_R*(H*dH_dlna+H*H)+1./6.*f))/(H*H*f_RR);
+    // double dfR_dlna = c1*m2*n*pow(x,n)*(1.-n+c2*(1.+n)*pow(x,n))*dR_dlna/(R*R*pow(1.+c2*pow(x,n),3.));
+    
+    //pvecback[pba->index_bg_kineticity_smg] = 0.;
+    //pvecback[pba->index_bg_tensor_excess_smg] = 0.;
+
+    // pvecback[pba->index_bg_M2_running_smg] = dfR_dlna/(1.+f_R);
+    // pvecback[pba->index_bg_M2_smg] = 1.+f_R;
+    // pvecback[pba->index_bg_braiding_smg] = -1.*pvecback[pba->index_bg_M2_running_smg];
+    // pvecback[pba->index_bg_delta_M2_smg] = pvecback[pba->index_bg_M2_smg]-1.; //M2-1
+    
+
+    // if (a<0.1){
+    //   pvecback[pba->index_bg_M2_running_smg] = 0.;
+    //   pvecback[pba->index_bg_M2_smg] = 1.;
+    //   pvecback[pba->index_bg_braiding_smg] = -pvecback[pba->index_bg_M2_running_smg];
+    //   //pvecback[pba->index_bg_delta_M2_smg] = pvecback[pba->index_bg_M2_smg]-1.; //M2-1
+      
+    // }
+    // else{
+    //   pvecback[pba->index_bg_M2_running_smg] = dfR_dlna/(1.+f_R);
+    //   pvecback[pba->index_bg_M2_smg] = 1.+f_R;
+    //   pvecback[pba->index_bg_braiding_smg] = -pvecback[pba->index_bg_M2_running_smg];
+    //   //pvecback[pba->index_bg_delta_M2_smg] = pvecback[pba->index_bg_M2_smg]-1.; //M2-1
+
+      
+    // }
+    //printf("pvecback[pba->index_bg_kineticity_smg] %g %g %g \n",pvecback[pba->index_bg_braiding_smg],pvecback[pba->index_bg_M2_running_smg],pvecback[pba->index_bg_M2_smg]);
+    
+    // 定义 Hu-Sawicki f(R) 的参数
+    double n = pba->parameters_2_smg[1];  // 例如 n = 1
+    double c1 = pba->parameters_2_smg[0];
+    double m2 = pow(8315.,-2);
+
+    // 计算 Ricci 标量 R
+    double R = 12.0 * H * H + 6.0 * H * dH_dlna;
+
+    // 计算 f(R) 及其导数
+    double x = R / m2;
+    double f =  - c1 * m2 * pow(x, n) / (1.0 + pow(x, n));
+    double f_R =  - c1 * n * pow(x, n-1.0) / pow(1.0 + pow(x, n), 2.0);
+    //double f_RR = (c1 * n * m2) *pow(x,n)*(1.-n+(1.+n)*pow(x,n))/(R*R*pow(1.+pow(x,n),3.));
+   
+    double f_RR = (-c1 * n * pow(x, n - 2) * ((n - 1) - (n + 1) * pow(x, n))) / (m2 * pow(1.0 + pow(x, n), 3));
+
+        // 计算 dR/dln a（通过修改爱因斯坦方程）
+    double trace_eq = (pvecback[pba->index_bg_rho_tot_wo_smg] - 3.*pvecback[pba->index_bg_p_tot_wo_smg])/pow(a,3) + (R - 2.*f + f_R*R)/6.;
+    double dR_dlna = (trace_eq - 3.*H*H_prime*(1 + f_R)) / (3.*f_RR*H*H);
+    //double dR_dlna = (pvecback[pba->index_bg_rho_tot_wo_smg]-(H*H-f_R*(H*dH_dlna+H*H)+1./6.*f))/(H*H*f_RR);
+    //double dR_dlna = (m2*pow(a,-3.)-(H*H-f_R*(H*dH_dlna+H*H)+1./6.*f))/(H*H*f_RR);
+    //double dR_dlna = 6.*dH_dlna*dH_dlna+24.*dH_dlna*H+6.*H*d2H_dlna2;
+
+    // 计算 α_M
+    double alpha_M =  f_RR * dR_dlna / (1.0 + f_R);
+
+    // 设置 EFT 参数
+    pvecback[pba->index_bg_kineticity_smg] = 0.0;      // α_K = 0
+    pvecback[pba->index_bg_braiding_smg] = -alpha_M;   // α_B = -α_M
+    pvecback[pba->index_bg_tensor_excess_smg] = 0.; // α_T = α_M
+    pvecback[pba->index_bg_M2_running_smg] = alpha_M;  // M^2 演化
+    pvecback[pba->index_bg_M2_smg] = 1.+f_R;
+    
+    
   }
 
   else if (pba->gravity_model_smg == propto_scale) {
@@ -1156,6 +1251,7 @@ int gravity_models_initial_conditions_smg(
 			pvecback_integration[pba->index_bi_delta_M2_smg] = pba->parameters_2_smg[4]-1.;
 			break;
 
+
 	  case propto_scale:
 			pvecback_integration[pba->index_bi_delta_M2_smg] = pba->parameters_2_smg[4]-1.;
 			break;
@@ -1259,6 +1355,13 @@ int gravity_models_print_stdout_smg(
       printf(" -> c_K = %g, c_B = %g, c_M = %g, c_T = %g, M_*^2_init = %g \n",
 	      pba->parameters_2_smg[0],pba->parameters_2_smg[1],pba->parameters_2_smg[2],pba->parameters_2_smg[3],
 	     pba->parameters_2_smg[4]);
+    break;
+
+
+    case fR:
+      printf("Modified gravity: fR with parameters: \n");
+      printf(" -> c1 = %g, n = %g \n",
+	      pba->parameters_2_smg[0],pba->parameters_2_smg[1]);
     break;
 
     case propto_scale:

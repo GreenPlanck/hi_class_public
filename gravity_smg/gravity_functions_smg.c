@@ -507,6 +507,7 @@ int gravity_functions_As_from_alphas_smg(
   double p_tot_p = factor*pvecback_derivs[pba->index_bg_p_tot_wo_smg];
   double p_smg_p = factor*pvecback_derivs[pba->index_bg_p_smg];
 
+  
   // kinetic term D
   pvecback[pba->index_bg_kinetic_D_smg] = kin + 3./2.*pow(bra,2);
 
@@ -681,12 +682,13 @@ int gravity_functions_As_from_alphas_smg(
   pvecback[pba->index_bg_lambda_11_smg] = bra + 2.*run - (2.-bra)*ten;
 
 
-  pvecback[pba->index_bg_cs2num_smg] = 
+  pvecback[pba->index_bg_cs2num_smg] = (
     + (2. - bra)*(bra + 2.*beh + 2.*run + 2.*beh*run - 2.*ten + bra*ten)/2.
     + 3./2.*(2. - bra)*(1. + beh)*pow(H,-2)*(rho_smg + p_smg)
-    - 3./2.*(1. + beh)*(2. + 2.*beh - 2.*M2 + bra*M2)*pow(H,-2)/M2*(rho_tot + p_tot)
+     - 3./2.*(1. + beh)*(2. + 2.*beh - 2.*M2 + bra*M2)*pow(H,-2)/M2*(rho_tot + p_tot)
+    //- 3./2.*(1. + beh)*2.*pow(H,-2)/M2*(rho_tot + p_tot)
     + (1. + beh)*bra_p/a/H
-    + (2. - bra)*beh_p/a/H;
+    + (2. - bra)*beh_p/a/H);
 
   // NOTE: this is to regularize cs2 when both the numerator and denominator are
   // below numerical precision
@@ -696,6 +698,7 @@ int gravity_functions_As_from_alphas_smg(
 	else {
 		pvecback[pba->index_bg_cs2_smg] = pvecback[pba->index_bg_cs2num_smg]/pvecback[pba->index_bg_kinetic_D_smg];
 	}
+  printf("bra,bra_p,pvecback[pba->index_bg_cs2num_smg] %g %g %g %g %g %g %g %g \n",ten,beh_p,beh,bra,bra_p,pvecback[pba->index_bg_cs2num_smg],pvecback[pba->index_bg_kinetic_D_smg],pvecback[pba->index_bg_cs2_smg]);
 
   // NOTE: Geff and slip are calculated for Horndeski. Consider extending them to
   // beyond Horndeski

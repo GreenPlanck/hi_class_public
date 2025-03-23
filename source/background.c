@@ -592,6 +592,7 @@ int background_functions(
               &rho_de),
       pba->error_message,
       pba->error_message);
+    
   }
   else {
     // not only _smg!!
