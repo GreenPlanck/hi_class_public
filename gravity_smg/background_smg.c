@@ -228,6 +228,8 @@ int background_gravity_functions_smg(
 	double * pvecback_derivs_temp;
 	class_alloc(pvecback_derivs_temp,pba->bg_size*sizeof(double),pba->error_message);
 	class_call(gravity_functions_As_from_alphas_smg(pba, pvecback, pvecback_derivs_temp),pba->error_message,pba->error_message);
+	free(pvecback_derivs_temp);
+	pvecback_derivs_temp = NULL;
 	// // end lzy
 	}
 	//end of parameterized mode
