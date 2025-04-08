@@ -2854,6 +2854,7 @@ int background_sources(
   class_call(background_functions(pba, a, y, long_info, bg_table_row),
              pba->error_message,
              pba->error_message);
+  
 
   return _SUCCESS_;
 

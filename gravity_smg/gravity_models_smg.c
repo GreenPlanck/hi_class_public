@@ -839,6 +839,8 @@ int gravity_models_get_alphas_par_smg(
     double c_m = pba->parameters_2_smg[2];
     double c_t = pba->parameters_2_smg[3];
 
+
+
     pvecback[pba->index_bg_kineticity_smg] = c_k*Omega_smg;
     pvecback[pba->index_bg_braiding_smg] = c_b*Omega_smg;
     pvecback[pba->index_bg_tensor_excess_smg] = c_t*Omega_smg;

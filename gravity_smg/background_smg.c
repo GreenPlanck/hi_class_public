@@ -221,16 +221,19 @@ int background_gravity_functions_smg(
  	    pba->error_message
  	  );
 	// // lzy
-	// double * pvecback_derivs;
-	// class_alloc(pvecback_derivs,pba->bg_size*sizeof(double),pba->error_message);
-	// class_call(gravity_functions_As_from_alphas_smg(pba, pvecback, pvecback_derivs),pba->error_message,pba->error_message);
+	//in the above code class_call(gravity_models_get_alphas_par_smg(pba, a, pvecback, pvecback_B), we have got pvecback[pba->index_bg_kineticity_smg] = c_k*Omega_smg, 
+	//this part background_gravity_functions_smg will be reduntently called during background_initial_conditions,background_derivs,background_sources; our modification (tune alphaK) is irrelvent to the first two, but not with background_sources, which will write down the background values
+	//by call background_sources->background_functions->background_gravity_functions_smg->gravity_models_get_alphas_par_smg, so it get wrong alphaK, 
+	//the eaist way to correct this is adding following lines to overwrite the alphas from gravity_models_get_alphas_par_smg
+	double * pvecback_derivs_temp;
+	class_alloc(pvecback_derivs_temp,pba->bg_size*sizeof(double),pba->error_message);
+	class_call(gravity_functions_As_from_alphas_smg(pba, pvecback, pvecback_derivs_temp),pba->error_message,pba->error_message);
 	// // end lzy
 	}
 	//end of parameterized mode
 
   // add a value to the kineticity to avoid problems with perturbations in certain models.
   // NOTE: this needs to be done here to avoid interfering with the equations
-  
   pvecback[pba->index_bg_kineticity_smg] += pba->kineticity_safe_smg;
 	
   //Derivatives of the BS functions and others. Set to zero here and computed numerically once the background is integrated (needed so that debuggers don't complain).
@@ -610,16 +613,19 @@ int background_solve_smg(
 
 		a = pvecback[pba->index_bg_a];
 
- 	  /* - indices for scalar field (modified gravity) */
- 	  class_call(derivatives_alphas_smg(pba, pvecback, pvecback_derivs, i),
- 	    pba->error_message,
- 	    pba->error_message
- 	  );
+ 	  
 
 
 		class_call(gravity_functions_As_from_alphas_smg(pba, pvecback, pvecback_derivs),
 							 pba->error_message,
 							 pba->error_message);
+
+			/* - indices for scalar field (modified gravity) */
+		class_call(derivatives_alphas_smg(pba, pvecback, pvecback_derivs, i),
+			pba->error_message,
+			pba->error_message
+		);
+
 
         copy_to_background_table_smg(pba, i, pba->index_bg_kineticity_smg, pvecback[pba->index_bg_kineticity_smg]); // lzy: this is important otherwise, we still use the default alphaK
 		copy_to_background_table_smg(pba, i, pba->index_bg_kinetic_D_smg, pvecback[pba->index_bg_kinetic_D_smg]);
