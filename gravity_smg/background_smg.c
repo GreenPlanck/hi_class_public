@@ -614,17 +614,18 @@ int background_solve_smg(
 		a = pvecback[pba->index_bg_a];
 
  	  
+	  		/* - indices for scalar field (modified gravity) */
+		class_call(derivatives_alphas_smg(pba, pvecback, pvecback_derivs, i),
+			pba->error_message,
+			pba->error_message
+		);
 
 
 		class_call(gravity_functions_As_from_alphas_smg(pba, pvecback, pvecback_derivs),
 							 pba->error_message,
 							 pba->error_message);
 
-			/* - indices for scalar field (modified gravity) */
-		class_call(derivatives_alphas_smg(pba, pvecback, pvecback_derivs, i),
-			pba->error_message,
-			pba->error_message
-		);
+		
 
 
         copy_to_background_table_smg(pba, i, pba->index_bg_kineticity_smg, pvecback[pba->index_bg_kineticity_smg]); // lzy: this is important otherwise, we still use the default alphaK
