@@ -832,6 +832,20 @@ int gravity_models_get_alphas_par_smg(
     delta_M2 = pvecback_B[pba->index_bi_delta_M2_smg];
   }
 
+  // if (pba->gravity_model_smg == propto_omega) {
+
+  //   double c_k = pba->parameters_2_smg[0];
+  //   double c_b = pba->parameters_2_smg[1];
+  //   double c_m = pba->parameters_2_smg[2];
+  //   double c_t = pba->parameters_2_smg[3];
+
+  //   pvecback[pba->index_bg_kineticity_smg] = c_k*Omega_smg;
+  //   pvecback[pba->index_bg_braiding_smg] = c_b*Omega_smg;
+  //   pvecback[pba->index_bg_tensor_excess_smg] = c_t*Omega_smg;
+  //   pvecback[pba->index_bg_M2_running_smg] = c_m*Omega_smg;
+  //   pvecback[pba->index_bg_delta_M2_smg] = delta_M2; //M2-1
+  //   pvecback[pba->index_bg_M2_smg] = 1.+delta_M2;
+  // }
   if (pba->gravity_model_smg == propto_omega) {
 
     double c_k = pba->parameters_2_smg[0];
@@ -839,12 +853,49 @@ int gravity_models_get_alphas_par_smg(
     double c_m = pba->parameters_2_smg[2];
     double c_t = pba->parameters_2_smg[3];
 
-    pvecback[pba->index_bg_kineticity_smg] = c_k*Omega_smg;
-    pvecback[pba->index_bg_braiding_smg] = c_b*Omega_smg;
-    pvecback[pba->index_bg_tensor_excess_smg] = c_t*Omega_smg;
-    pvecback[pba->index_bg_M2_running_smg] = c_m*Omega_smg;
-    pvecback[pba->index_bg_delta_M2_smg] = delta_M2; //M2-1
-    pvecback[pba->index_bg_M2_smg] = 1.+delta_M2;
+    double bra = c_b*Omega_smg;
+    double run = c_m*Omega_smg;
+    double ten = c_t*Omega_smg;
+    double dM2 = delta_M2;
+    double M2 = 1.+ delta_M2;
+
+    double H = sqrt(rho_tot-pba->K/a/a);
+    double H_prime = - (3./2.) * (rho_tot + p_tot) * a; //dHdtau
+    double rho_m = pvecback[pba->index_bg_rho_tot_wo_smg];
+    double rho_smg = pvecback[pba->index_bg_rho_smg];
+    double p_smg = pvecback[pba->index_bg_p_smg];
+    double rho_tot_wo_smg = pvecback[pba->index_bg_rho_tot_wo_smg];
+    double p_tot_wo_smg = pvecback[pba->index_bg_p_tot_wo_smg];
+    double w_smg = p_smg/rho_smg;
+    double Omega_m = rho_m/rho_tot;
+
+    // bra_p=dalphaB_dtau = aH*dalphaB_dlna
+
+    //double bra_p = c_b*a*H*(-3.*w_smg*Omega_m*Omega_smg); // this equation only valid after MD and assume CPL for w
+
+    //double rho_smg_prime = pvecback[pba->index_bg_rho_prime_smg];
+    double rho_smg_prime =  -3.*a*H*(1.+w_smg)*rho_smg;
+    double bra_p = c_b*(rho_smg_prime*H*H-rho_smg*2*H*H_prime)/pow(H,4);
+
+    double beh = 0.;
+    double beh_p = 0.;
+
+    double cs2num = 
+    + (2. - bra)*(bra + 2.*beh + 2.*run + 2.*beh*run - 2.*ten + bra*ten)/2.
+    + 3./2.*(2. - bra)*(1. + beh)*pow(H,-2)*(rho_smg + p_smg)
+    - 3./2.*(1. + beh)*(2. + 2.*beh - 2.*M2 + bra*M2)*pow(H,-2)/M2*(rho_tot_wo_smg + p_tot_wo_smg)
+    + (1. + beh)*bra_p/a/H
+    + (2. - bra)*beh_p/a/H;
+
+    double kin = cs2num - 3./2.*pow(bra,2);
+
+
+    pvecback[pba->index_bg_kineticity_smg] = kin;
+    pvecback[pba->index_bg_braiding_smg] = bra;
+    pvecback[pba->index_bg_tensor_excess_smg] = ten;
+    pvecback[pba->index_bg_M2_running_smg] = run;
+    pvecback[pba->index_bg_delta_M2_smg] = dM2; //M2-1
+    pvecback[pba->index_bg_M2_smg] = M2;
   }
 
   else if (pba->gravity_model_smg == propto_scale) {
